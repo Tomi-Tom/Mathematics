@@ -1,0 +1,133 @@
+#!/usr/bin/python3
+
+import sys
+from math import sqrt, tan, radians
+from sys import argv
+
+# ===============================[EQUATIONS]===============================
+
+def equation_resolution(x : int):
+    a0 = int(argv[2])
+    a1 = int(argv[3])
+    a2 = int(argv[4])
+    a3 = int(argv[5])
+    a4 = int(argv[6])
+
+    res = (a4 * (x ** 4)) + (a3 * (x ** 3)) + (a2 * (x ** 2)) + (a1 * x) + a0
+    return res
+
+def derivative_equation_resolution(x : int):
+    a1 = int(argv[3])
+    a2 = int(argv[4])
+    a3 = int(argv[5])
+    a4 = int(argv[6])
+
+    res = (4 * a4 * (x ** 3)) + (3 * a3 * (x ** 2)) + (2 * a2 * x) + a1
+    return res
+
+# ================================[METHODS]================================
+
+def bisection_method():
+    lim_1 = 0
+    lim_2  = 1
+    test  = 0
+    stock  = 1
+    equa_1 = equation_resolution(lim_1)
+    len = int(argv[7])
+
+    while abs(test - stock) > (10**(-len)):
+
+        stock = test
+        test = (lim_1 + lim_2)/ 2
+
+        if equa_1 * equation_resolution(test) < 0:
+            lim_2 = test
+        else:
+            lim_1 = test
+
+        if (10**len) * test % 1 == 0:
+            print("x =", test)
+        else:
+            print("x = %.*f" % (len, test))
+
+def newton_method():
+    x = 0.5
+    stock = 0
+    limit = 0
+    len = int(argv[7])
+
+    while (abs(stock - x) > 10**(-len)):
+
+        limit += 1
+        stock = x
+
+        if (10**len * x % 1) == 0:
+            print("x =", x)
+        else:
+            print("x = %.*f" % (len, x))
+
+        x = x - (equation_resolution(x) / derivative_equation_resolution(x))
+
+def secant_method():
+    high = 0
+    low = 1
+    stock = 1
+    len = int(argv[7])
+
+    while (abs(high - low) > (10**(-len))):
+
+        stock = low - ((low - high) / (equation_resolution(low) - equation_resolution(high))) * equation_resolution(low)
+        high = low
+        low = stock
+
+        if (10 **len) * stock % 1 == 0:
+            print("x =", stock)
+        else:
+            print("x = %.*f" % (len, stock))
+
+# =================================[UTILS]=================================
+
+def help():
+    print("USAGE")
+    print("\t./105torus opt a0 a1 a2 a3 a4 n\n")
+    print("DESCRIPTION")
+    print("\topt\tmethod option:")
+    print("\t\t\t1 for the bisection method")
+    print("\t\t\t2 for Newton's method")
+    print("\t\t\t3 for the secant method")
+    print("\ta[0-4]\tcoefficients of the equation")
+    print("\tn\tlen (the application of the polynomial to the solution shoud")
+    print("\t\tbe smaller than 10^-n)")
+    exit(0)
+
+def error_handling():
+    argc = len(argv)
+    opt = int(argv[1])
+    if argc != 2 and argc != 8:
+        exit(84)
+    if opt != 1 and opt != 2 and opt != 3:
+        exit(84)
+    for arg in argv[1:]:
+        try:
+            int(arg)
+            is_dig = True
+        except ValueError:
+            is_dig = False
+        if is_dig == False:
+            exit(84)
+
+# =================================[MAIN]==================================
+
+def base():
+    error_handling()
+    opt = int(argv[1])
+    if argv[1] == "-h":
+        help()
+    if opt == 1:
+        bisection_method()
+    if opt == 2:
+        newton_method()
+    if opt == 3:
+        secant_method()
+
+base()
